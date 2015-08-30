@@ -48,6 +48,34 @@ handlebars.registerHelper("disqus", function( path ) {
 	return metadata.site.disqus.siteUrl + "/" + ( path ? path.replace(/\\/g, "/") : "" ) + "/";
 });
 
+handlebars.registerHelper("archive", function( context, options ) {
+	var ret = "",
+		data, currentYear, year;
+
+	if( options.data ) {
+		data = handlebars.createFrame( options.data );
+	}
+
+	for( var i = 0; i < context.length; i++ ) {
+		var post = context[ i ];
+
+		currentYear = moment.utc( post.date ).format( "YYYY" );
+
+		if( data ) {
+			if( year !== currentYear ) {
+				year = currentYear;
+				data.year = year;
+			} else {
+				data.year = null;
+			}
+
+			ret += options.fn( post, { data: data });
+		}
+	}
+
+	return ret;
+});
+
 metalsmith(__dirname)
 	.metadata( metadata )
 	.use(sass({
@@ -63,7 +91,7 @@ metalsmith(__dirname)
 	.use(markdown())
 	.use(collections({
 		blog: {
-			pattern: "blog/**.html",
+			pattern: ["!blog/index.html", "blog/**.html"],
 			sortBy: "date",
 			reverse: true
 		}

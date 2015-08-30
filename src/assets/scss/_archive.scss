@@ -1,0 +1,22 @@
+#blog-archives {
+	dl {
+		dt {
+			float: left;
+		}
+
+		dd {
+			margin-left: 80px;
+			margin-bottom: 8px;
+		}
+
+		dd + dt {
+			margin-top: 32px;
+
+			&+ dd {
+				margin-top: 20px;
+				padding-top: 20px;
+				border-top: 1px solid #c3c3c3;
+			}
+		}
+	}
+}
