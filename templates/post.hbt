@@ -1,0 +1,8 @@
+{{> html-header}}
+{{> header}}
+<main class="container-fluid">
+<!-- if this article include is indented, it breaks all the code indentation.. -->
+{{> article}}
+</main>
+{{> footer}}
+{{> html-footer}}

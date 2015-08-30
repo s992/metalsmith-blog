@@ -1,0 +1,31 @@
+<div class="row">
+	<article class="col-md-5 center-block">
+		<header>
+			<h1>
+				<a href="{{link path}}">{{title}}</a>
+			</h1>
+			<p class="meta">
+				<time datetime="{{date}}">{{moment date "D MMM YYYY"}}</time>
+			</p>
+		</header>
+		<div class="content full-content">
+			{{{ contents }}}
+		</div>
+		<footer>
+			<nav class="pagination">
+				{{#if next}}
+					<a href="{{link next.path}}" class="pull-left">&laquo; {{next.title}}</a>
+				{{/if}}
+				{{#if previous}}
+					<a href="{{link previous.path}}" class="pull-right">{{previous.title}} &raquo;</a>
+				{{/if}}
+			</nav>
+		</footer>
+	</article>
+</div>
+<div class="row">
+	<div class="col-md-5 center-block">
+		<h1>Comments</h1>
+		{{> disqus}}
+	</div>
+</div>

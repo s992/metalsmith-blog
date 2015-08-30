@@ -1,0 +1,7 @@
+{{> html-header}}
+{{> header}}
+<main class="container-fluid">
+	{{{ contents }}}
+</main>
+{{> footer}}
+{{> html-footer}}

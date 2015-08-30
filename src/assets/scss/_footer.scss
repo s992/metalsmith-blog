@@ -1,0 +1,23 @@
+footer#site-footer {
+	background-color: $red;
+	color: #fff;
+	padding: 15px 60px;
+	margin-top: 120px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+
+	ul.nav {
+		&> li > a {
+			color: #fff;
+			font-size: 38px;
+			padding: 10px 35px;
+
+			#{$link-states} {
+				background-color: #fff;
+				color: $red;
+			}
+		}
+	}
+}

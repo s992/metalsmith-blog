@@ -1,0 +1,20 @@
+<div class="row">
+	<article class="col-md-5 center-block">
+		<header>
+			<h1>
+				<a href="{{link path}}">{{title}}</a>
+			</h1>
+			<p class="meta">
+				<time datetime="{{date}}">{{moment date "D MMM YYYY"}}</time>
+			</p>
+		</header>
+		<div class="content">
+			{{{ excerpt }}}
+		</div>
+		{{#if excerpted}}
+			<footer>
+				<a href="{{link path}}">Read on &rarr;</a>
+			</footer>
+		{{/if}}
+	</article>
+</div>

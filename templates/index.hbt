@@ -1,0 +1,24 @@
+{{> html-header}}
+{{> header}}
+<main class="container-fluid">
+	{{#each pagination.files}}
+		{{> article-excerpt}}
+	{{/each}}
+
+	{{#if pagination}}
+		<div class="row">
+			<div class="col-md-5 center-block">
+				<nav class="pagination">
+					{{#if pagination.next}}
+						<a href="{{link pagination.next.path}}" class="pull-left">&laquo; Older</a>
+					{{/if}}
+					{{#if pagination.previous}}
+						<a href="{{link pagination.previous.path}}" class="pull-right">Newer &raquo;</a>
+					{{/if}}
+				</nav>
+			</div>
+		</div>
+	{{/if}}
+</main>
+{{> footer}}
+{{> html-footer}}

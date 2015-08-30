@@ -1,0 +1,22 @@
+nav.navbar.navbar-default {
+	background-color: #fff;
+	border: 0;
+	border-radius: 0;
+	border-bottom: 1px solid $red;
+
+	a {
+		color: $grey;
+		line-height: 75px;
+		height: 75px;
+		padding-top: 0;
+
+		#{$link-states} {
+			color: $red;
+		}
+	}
+
+	button {
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+}

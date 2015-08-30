@@ -1,0 +1,19 @@
+// bootstrap overrides
+$font-family-sans-serif: "Roboto", Helvetica, Arial, sans-serif !default;
+$font-family-serif: "Slabo 27px", "Times New Roman", Times, serif !default;
+$headings-font-family: $font-family-serif;
+$font-size-base: 18px;
+$line-height-base: 1.7;
+
+// font awesome overrides
+$fa-font-path: "../fonts";
+
+// colors
+$red: #b93848;
+$purple: #3a3042;
+$grey: #232621;
+$white: #f1f1ff;
+$blue: #16a8c7;
+
+// convenience
+$link-states: "&:hover, &:focus, &:active";

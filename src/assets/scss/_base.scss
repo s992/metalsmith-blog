@@ -1,0 +1,28 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+
+body {
+	margin: 0 0 160px;
+}
+
+.center-block {
+	float: none !important;
+}
+
+h1 a {
+	color: $grey;
+
+	#{$link-states} {
+		text-decoration: none;
+	}
+}
+
+a {
+	color: $red;
+
+	#{$link-states} {
+		color: $red;
+	}
+}
