@@ -15,7 +15,7 @@
     "harmonize": "1.4.4",
     "highlight.js": "8.7.0",
     "metalsmith": "2.0.1",
-    "metalsmith-better-excerpts": "0.1.7",
+    "metalsmith-better-excerpts": "git://github.com/s992/metalsmith-better-excerpts.git#3ffa303126917aaaf8b79ac5003cee4a528830e7",
     "metalsmith-branch": "0.0.4",
     "metalsmith-collections": "git://github.com/s992/metalsmith-collections.git#c4716f6702e47c8256afb6b5788e8b6075cd55c3",
     "metalsmith-copy-assets": "git://github.com/sarahhenderson/metalsmith-copy-assets.git#859b4b83aca2a8aad1d7bace0c90619257722b3d",
