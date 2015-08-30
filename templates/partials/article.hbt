@@ -1,5 +1,5 @@
 <div class="row">
-	<article class="col-md-5 center-block">
+	<article class="col-sm-5 center-block">
 		<header>
 			<h1>
 				<a href="{{link path}}">{{title}}</a>
@@ -25,7 +25,7 @@
 </div>
 {{#if comments}}
 	<div class="row">
-		<div class="col-md-5 center-block">
+		<div class="col-sm-5 center-block">
 			<h1>Comments</h1>
 			{{> disqus}}
 		</div>

@@ -1,0 +1,2 @@
+<a href="{{link path}}">{{title}}</a>
+<time datetime="{{date}}">{{moment date "MMM DD"}}</time>
