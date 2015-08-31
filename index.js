@@ -12,6 +12,7 @@ var metalsmith = require("metalsmith"),
 	pagination = require("metalsmith-pagination"),
 	metallic = require("metalsmith-metallic"),
 	minify = require("metalsmith-html-minifier"),
+	uncss = require("metalsmith-uncss"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
 	handlebars = require("handlebars");
@@ -130,6 +131,10 @@ metalsmith(__dirname)
 		pattern: "**/*.html"
 	}))
 	.use(minify())
+	.use(uncss({
+		output: "assets/css/site.css",
+		removeOriginal: true
+	}))
 	.destination("./build")
 	.build(function( err ) {
 		if( err ) {
