@@ -11,7 +11,7 @@ var metalsmith = require("metalsmith"),
 	excerpts = require("metalsmith-better-excerpts"),
 	pagination = require("metalsmith-pagination"),
 	metallic = require("metalsmith-metallic"),
-	minify = require("metalsmith-html-minifier"),
+	minifyHtml = require("metalsmith-html-minifier"),
 	uncss = require("metalsmith-uncss"),
 	cleanCss = require("metalsmith-clean-css"),
 	argv = require("yargs").argv,
@@ -131,7 +131,7 @@ metalsmith(__dirname)
 		default: "default.hbt",
 		pattern: "**/*.html"
 	}))
-	.use(minify())
+	.use(minifyHtml())
 	.use(uncss({
 		output: "assets/css/site.css",
 		removeOriginal: true
