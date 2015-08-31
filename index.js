@@ -13,6 +13,7 @@ var metalsmith = require("metalsmith"),
 	metallic = require("metalsmith-metallic"),
 	minify = require("metalsmith-html-minifier"),
 	uncss = require("metalsmith-uncss"),
+	cleanCss = require("metalsmith-clean-css"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
 	handlebars = require("handlebars");
@@ -135,6 +136,7 @@ metalsmith(__dirname)
 		output: "assets/css/site.css",
 		removeOriginal: true
 	}))
+	.use(cleanCss())
 	.destination("./build")
 	.build(function( err ) {
 		if( err ) {
