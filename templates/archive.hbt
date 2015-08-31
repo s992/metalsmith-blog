@@ -2,7 +2,7 @@
 {{> header}}
 <main class="container-fluid">
 	<div class="row">
-		<div class="col-sm-5 center-block">
+		<div class="col-md-8 col-lg-7 col-xl-5 center-block">
 			<div id="blog-archives">
 				<dl>
 					{{#archive collections.blog}}

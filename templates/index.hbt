@@ -7,7 +7,7 @@
 
 	{{#if pagination}}
 		<div class="row">
-			<div class="col-sm-5 center-block">
+			<div class="col-md-8 col-lg-7 col-xl-5 center-block">
 				<nav class="pagination">
 					{{#if pagination.next}}
 						<a href="{{link pagination.next.path}}" class="pull-left">&laquo; Older</a>

@@ -17,3 +17,26 @@ footer#site-footer {
 		}
 	}
 }
+
+@media (max-width: 550px) {
+	footer#site-footer ul.nav {
+		float: initial !important;
+		
+		&> li > a {
+			font-size: 24px;
+		}
+	}
+}
+
+@media (max-width: 504px) {
+	footer#site-footer ul.nav > li > a {
+		font-size: 14px;
+	}
+}
+
+@media(max-width: 483px) {
+	footer#site-footer ul.nav > li {
+		float: initial !important;
+		text-align: center;
+	}
+}
