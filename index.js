@@ -16,9 +16,12 @@ var metalsmith = require("metalsmith"),
 	cleanCss = require("metalsmith-clean-css"),
 	feed = require("metalsmith-feed"),
 	ignore = require("metalsmith-ignore"),
+	canonical = require("./lib/metalsmith-canonical"),
+	description = require("./lib/metalsmith-description"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
-	handlebars = require("handlebars");
+	handlebars = require("handlebars"),
+	handlebarsHelpers = require("./lib/handlebars-helpers");
 
 var PROD = argv.env && argv.env === "prod";
 
@@ -40,45 +43,10 @@ var metadata = {
 	}
 };
 
-handlebars.registerHelper("moment", function( date, format ) {
-	return moment.utc( date ).format( format );
-});
-
-handlebars.registerHelper("link", function( path ) {
-	return metadata.site.url + "/" + ( path ? path.replace(/\\/g, "/") : "" );
-});
-
-handlebars.registerHelper("disqus", function( path ) {
-	return metadata.site.disqus.siteUrl + "/" + ( path ? path.replace(/\\/g, "/") : "" ) + "/";
-});
-
-handlebars.registerHelper("archive", function( context, options ) {
-	var ret = "",
-		data, currentYear, year;
-
-	if( options.data ) {
-		data = handlebars.createFrame( options.data );
-	}
-
-	for( var i = 0; i < context.length; i++ ) {
-		var post = context[ i ];
-
-		currentYear = moment.utc( post.date ).format( "YYYY" );
-
-		if( data ) {
-			if( year !== currentYear ) {
-				year = currentYear;
-				data.year = year;
-			} else {
-				data.year = null;
-			}
-
-			ret += options.fn( post, { data: data });
-		}
-	}
-
-	return ret;
-});
+handlebars.registerHelper("moment", handlebarsHelpers.momentDateFormat);
+handlebars.registerHelper("link", handlebarsHelpers.link( metadata ));
+handlebars.registerHelper("disqus", handlebarsHelpers.disqus( metadata ));
+handlebars.registerHelper("archive", handlebarsHelpers.archive);
 
 metalsmith(__dirname)
 	.metadata( metadata )
@@ -131,6 +99,8 @@ metalsmith(__dirname)
 		pruneLength: 0,
 		stripTags: false
 	}))
+	.use(canonical())
+	.use(description())
 	.use(layouts({
 		engine: "handlebars",
 		directory: "templates",
