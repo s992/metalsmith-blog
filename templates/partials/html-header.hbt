@@ -7,8 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="{{description}}">
 
-	<link rel="canonical" href="{{canonical}}">
-
 	<!-- so many favicons.. -->
 	<link rel="icon" href="{{site.url}}/favicon.ico">
 	<link rel="apple-touch-icon" sizes="57x57" href="{{site.url}}/apple-touch-icon-57x57.png">
@@ -32,8 +30,8 @@
 
 	<link rel="stylesheet" href="{{site.url}}/assets/css/site.css">
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Slabo+27px|Roboto">
-	<!-- todo
-	<link rel="alternate" title="{{site.title}}" type="application/atom+xml" href="{{site.rss}}">
-	-->
+
+	<link rel="canonical" href="{{canonical}}">
+	<link rel="alternate" title="{{site.title}}" type="application/rss+xml" href="{{site.url}}/rss.xml">
 </head>
 <body>
