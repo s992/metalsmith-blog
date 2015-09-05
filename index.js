@@ -18,6 +18,7 @@ var metalsmith = require("metalsmith"),
 	ignore = require("metalsmith-ignore"),
 	canonical = require("./lib/metalsmith-canonical"),
 	description = require("./lib/metalsmith-description"),
+	sitemap = require("metalsmith-sitemap"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
 	handlebars = require("handlebars"),
@@ -110,6 +111,12 @@ metalsmith(__dirname)
 	}))
 	.use(feed({
 		collection: "blog"
+	}))
+	.use(sitemap({
+		ignoreFiles: [ /^(?!.*html).*$/ ],
+		output: "sitemap.xml",
+		urlProperty: "canonical",
+		hostname: metadata.site.url
 	}))
 	.use(minifyHtml())
 	.use(uncss({
