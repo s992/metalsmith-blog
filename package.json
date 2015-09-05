@@ -22,6 +22,7 @@
     "metalsmith-copy-assets": "git://github.com/sarahhenderson/metalsmith-copy-assets.git#859b4b83aca2a8aad1d7bace0c90619257722b3d",
     "metalsmith-feed": "0.1.0",
     "metalsmith-html-minifier": "1.1.0",
+    "metalsmith-ignore": "0.1.2",
     "metalsmith-layouts": "1.4.0",
     "metalsmith-markdown": "0.2.1",
     "metalsmith-metallic": "0.3.1",

@@ -15,6 +15,7 @@ var metalsmith = require("metalsmith"),
 	uncss = require("metalsmith-uncss"),
 	cleanCss = require("metalsmith-clean-css"),
 	feed = require("metalsmith-feed"),
+	ignore = require("metalsmith-ignore"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
 	handlebars = require("handlebars");
@@ -81,12 +82,17 @@ handlebars.registerHelper("archive", function( context, options ) {
 
 metalsmith(__dirname)
 	.metadata( metadata )
+	.use(ignore([ "favicons/*" ]))
 	.use(sass({
 		outputDir: "assets/css/"
 	}))
 	.use(copyAssets({
 		src: "node_modules/font-awesome/fonts",
 		dest: "assets/fonts"
+	}))
+	.use(copyAssets({
+		src: "src/favicons",
+		dest: ""
 	}))
 	.use(metallic({
 		tabReplace: "  "
