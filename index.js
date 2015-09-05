@@ -14,6 +14,7 @@ var metalsmith = require("metalsmith"),
 	minifyHtml = require("metalsmith-html-minifier"),
 	uncss = require("metalsmith-uncss"),
 	cleanCss = require("metalsmith-clean-css"),
+	feed = require("metalsmith-feed"),
 	argv = require("yargs").argv,
 	moment = require("moment"),
 	handlebars = require("handlebars");
@@ -24,7 +25,7 @@ var metadata = {
 	site: {
 		title: "Sean Walsh",
 		author: "Sean Walsh",
-		url: PROD ? "http://swalsh.org" : "",
+		url: PROD ? "http://swalsh.org" : "http://localhost:8080",
 		social: {
 			github: "https://github.com/s992",
 			twitter: "https://twitter.com/theseanwalsh",
@@ -130,6 +131,9 @@ metalsmith(__dirname)
 		partials: "templates/partials",
 		default: "default.hbt",
 		pattern: "**/*.html"
+	}))
+	.use(feed({
+		collection: "blog"
 	}))
 	.use(minifyHtml())
 	.use(uncss({

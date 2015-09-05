@@ -20,6 +20,7 @@
     "metalsmith-clean-css": "2.0.0",
     "metalsmith-collections": "git://github.com/s992/metalsmith-collections.git#c4716f6702e47c8256afb6b5788e8b6075cd55c3",
     "metalsmith-copy-assets": "git://github.com/sarahhenderson/metalsmith-copy-assets.git#859b4b83aca2a8aad1d7bace0c90619257722b3d",
+    "metalsmith-feed": "0.1.0",
     "metalsmith-html-minifier": "1.1.0",
     "metalsmith-layouts": "1.4.0",
     "metalsmith-markdown": "0.2.1",
