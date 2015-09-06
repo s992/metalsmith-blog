@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><title>File Uploads with AngularJS and Ratpack: Part 2 - Sean Walsh</title><meta name=author content="Sean Walsh"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="This is a continuation of this post, where I described the Ratpack back end for our file upload application. If you&#x27;re only interested in the Angular ..."><link rel=icon href=http://swalsh.org/favicon.ico><link rel=apple-touch-icon sizes=57x57 href=http://swalsh.org/apple-touch-icon-57x57.png><link rel=apple-touch-icon sizes=60x60 href=http://swalsh.org/apple-touch-icon-60x60.png><link rel=apple-touch-icon sizes=72x72 href=http://swalsh.org/apple-touch-icon-72x72.png><link rel=apple-touch-icon sizes=76x76 href=http://swalsh.org/apple-touch-icon-76x76.png><link rel=apple-touch-icon sizes=114x114 href=http://swalsh.org/apple-touch-icon-114x114.png><link rel=apple-touch-icon sizes=120x120 href=http://swalsh.org/apple-touch-icon-120x120.png><link rel=apple-touch-icon sizes=144x144 href=http://swalsh.org/apple-touch-icon-144x144.png><link rel=apple-touch-icon sizes=152x152 href=http://swalsh.org/apple-touch-icon-152x152.png><link rel=apple-touch-icon sizes=180x180 href=http://swalsh.org/apple-touch-icon-180x180.png><link rel=icon type=image/png href=http://swalsh.org/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=http://swalsh.org/favicon-194x194.png sizes=194x194><link rel=icon type=image/png href=http://swalsh.org/favicon-96x96.png sizes=96x96><link rel=icon type=image/png href=http://swalsh.org/android-chrome-192x192.png sizes=192x192><link rel=icon type=image/png href=http://swalsh.org/favicon-16x16.png sizes=16x16><link rel=manifest href=http://swalsh.org/manifest.json><meta name=msapplication-TileColor content=#b91d47><meta name=msapplication-TileImage content=/mstile-144x144.png><meta name=theme-color content=#ffffff><link rel=stylesheet href=http://swalsh.org/assets/css/site.css><link rel=stylesheet href="http://fonts.googleapis.com/css?family=Slabo+27px|Roboto"><link rel=canonical href=http://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2><link rel=alternate title="Sean Walsh" type=application/rss+xml href=http://swalsh.org/rss.xml></head><body><header><nav class="navbar navbar-default"><div class=container-fluid><div class=navbar-header><button type=button class="navbar-toggle collapsed" data-toggle=collapse data-target=#main-navbar-collapse aria-expanded=false><span class=sr-only>Toggle navigation</span> <span class=icon-bar></span> <span class=icon-bar></span> <span class=icon-bar></span></button> <a class=navbar-brand href="http://swalsh.org/">Sean Walsh</a></div><div class="collapse navbar-collapse" id=main-navbar-collapse><ul class="nav navbar-nav"><li><a href=http://swalsh.org/blog>Blog</a></li><li><a href=http://swalsh.org/about>About</a></li></ul></div></div></nav></header><main class=container-fluid><div class=row><article class="col-md-8 col-lg-7 col-xl-5 center-block"><header><h1><a href=http://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2>File Uploads with AngularJS and Ratpack: Part 2</a></h1><p class=meta><time datetime="Wed Sep 17 2014 14:25:18 GMT-0700 (Pacific Daylight Time)">17 Sep 2014</time></p></header><div class="content full-content"><p>This is a continuation of <a href=/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1>this post</a>, where I described the Ratpack back end for our file upload application. If you&#39;re only interested in the Angular stuff, please keep reading, but otherwise I&#39;d recommend you take a look at part 1 of the series.</p><p>Before I begin, I just want to offer a big thank you to Jenny Louthan, whose <a href=http://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs>blog post</a> is where I learned how to do file uploads with Angular. Both the directive and file upload service method described in this article are <em>very</em> slightly modified versions of the ones in her blog post.</p><h2 id=the-application>The Application</h2><p>Here&#39;s a quick recap for those of you who chose to skip part 1:</p><p>The end result of this series is a simple image upload application. The Angular powered front-end will send images to Ratpack, where they&#39;ll be written to disk along with thumbnails. The full project code can be found <a href=https://github.com/s992/angular-ratpack-upload>here</a>. This is what the final application will look like:</p><p><a href=/assets/images/angular-ratpack-upload/scrn1.png target=_blank><img src=/assets/images/angular-ratpack-upload/scrn1.png></a></p><p>It&#39;s not pretty, but if you&#39;re looking for an article on design, you&#39;ve come to the wrong place! :)</p><h2 id=angularjs>AngularJS</h2><p>Our Angular app will be extremely simple by Angular standards - just a single view and nothing too fancy happening outside of the file upload stuff. One important thing to note is that we&#39;ll be using the <a href=https://developer.mozilla.org/en-US/docs/Web/API/FormData>FormData</a> object, which only has IE support in IE10+. It works fine in Chrome and Firefox. If you need support for an earlier IE version, there are a number of directives that make use of a hidden iframe to support file uploads.</p><h3 id=project-structure>Project Structure</h3><p>The application will live inside of the assets folder we declared in part one of this series: <code>/src/ratpack/public</code>. I&#39;ve broken the Angular code up so that we have a single file for each controller, service, and directive we&#39;ll be using. This is my standard project structure, but it certainly isn&#39;t the only way and probably isn&#39;t even the &quot;right&quot; way.</p><pre><code class=hljs><span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>js/app.js
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>js<span class=hljs-regexp>/controllers/</span>upload.js
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>js<span class=hljs-regexp>/directives/</span>fileModel.js
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>js<span class=hljs-regexp>/services/</span>imageService.js
+
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>index.html</code></pre><h3 id=index-html>index.html</h3><p>The first thing we need to do with this application is add the <code>ng-app</code> and <code>ng-controller</code> directives to the HTML. In an application with multiple views, you&#39;d likely use <code>$routeProvider</code> to configure your controller, but that&#39;s not necessary here.</p><pre><code class="hljs html"><span class=hljs-doctype>&lt;!DOCTYPE html&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>html</span> <span class=hljs-attribute>lang</span>=<span class=hljs-value>"en"</span> <span class=hljs-attribute>ng-app</span>=<span class=hljs-value>"uploader"</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>head</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>title</span>&gt;</span>AngularJS File Upload with Ratpack<span class=hljs-tag>&lt;/<span class=hljs-title>title</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>head</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>body</span> <span class=hljs-attribute>ng-controller</span>=<span class=hljs-value>"UploadCtrl"</span>&gt;</span>
+
+    <span class=hljs-tag>&lt;<span class=hljs-title>h1</span>&gt;</span>File Uploader<span class=hljs-tag>&lt;/<span class=hljs-title>h1</span>&gt;</span>
+
+<span class=hljs-tag>&lt;/<span class=hljs-title>body</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>html</span>&gt;</span></code></pre><p>Within our page, we need three things: a container for possible errors, the upload form itself, and the image grid. The error container is quick and easy - just a div that we&#39;ll display if <code>$scope.error</code> contains a message for us.</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>ng-show</span>=<span class=hljs-value>"error.length"</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>p</span>&gt;</span>{{ error }}<span class=hljs-tag>&lt;/<span class=hljs-title>p</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span></code></pre><p>Following that is the upload form. We use the <code>ng-disabled</code> attribute to disable both the input and the submit button while we&#39;re waiting for a response from the back end. In this case, we just use a boolean value sitting on $scope that we&#39;ll toggle within the controller. We&#39;ll use that same flag to indicate that something is happening by setting the button text to either &quot;Upload!&quot; or &quot;Uploading..&quot; depending on whether we have an open request or not. Finally, we have a container that will be populated with a message when the upload has completed successfuly.</p><p>Make a mental note of the <code>file-model</code> attribute on the file input - we&#39;ll discuss that in the directives section.</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>form</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>input</span> <span class=hljs-attribute>type</span>=<span class=hljs-value>"file"</span> <span class=hljs-attribute>file-model</span>=<span class=hljs-value>"fileToUpload"</span> <span class=hljs-attribute>ng-disabled</span>=<span class=hljs-value>"uploading"</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>button</span> <span class=hljs-attribute>type</span>=<span class=hljs-value>"button"</span> <span class=hljs-attribute>ng-click</span>=<span class=hljs-value>"uploadFile()"</span> <span class=hljs-attribute>ng-disabled</span>=<span class=hljs-value>"uploading"</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>span</span> <span class=hljs-attribute>ng-show</span>=<span class=hljs-value>"!uploading"</span>&gt;</span>Upload!<span class=hljs-tag>&lt;/<span class=hljs-title>span</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>span</span> <span class=hljs-attribute>ng-show</span>=<span class=hljs-value>"uploading"</span>&gt;</span>Uploading..<span class=hljs-tag>&lt;/<span class=hljs-title>span</span>&gt;</span>
+    <span class=hljs-tag>&lt;/<span class=hljs-title>button</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>span</span> <span class=hljs-attribute>ng-show</span>=<span class=hljs-value>"flash.length"</span>&gt;</span>{{ flash }}<span class=hljs-tag>&lt;/<span class=hljs-title>span</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>form</span>&gt;</span></code></pre><p>Our image grid is comprised of image tags wrapped in anchor tags. Here, we&#39;re using <code>ng-repeat</code> to iterate over the list of image file names we received from the back end. Using the file names and the image path (which we also received from the back end), we build up a collection of thumbnails that link to the full size image.</p><p>There&#39;s one thing to point out here: when using a dynamic image source, you want to use the ng-src attribute rather than the standard src attribute. With a standard src attribute, the browser will make two HTTP requests. The first will come on initial page load and you will see a 404 because it&#39;s requesting the literal <code>{{ imagePath }}/thumb/{{ image }}</code>. The second will come once Angular has populated the HTML with the values of imagePath and image and then we&#39;ll get the actual image we need. By using ng-src, we won&#39;t see a request until Angular has resolved both imagePath and image.</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>h1</span>&gt;</span>{{ images.length }} Uploaded Images<span class=hljs-tag>&lt;/<span class=hljs-title>h1</span>&gt;</span>
+
+<span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"images"</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>a</span> <span class=hljs-attribute>ng-repeat</span>=<span class=hljs-value>"image in images"</span> <span class=hljs-attribute>href</span>=<span class=hljs-value>"{{ imagePath }}/{{ image }}"</span> <span class=hljs-attribute>target</span>=<span class=hljs-value>"_blank"</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>img</span> <span class=hljs-attribute>ng-src</span>=<span class=hljs-value>"{{ imagePath }}/thumb/{{ image }}"</span>&gt;</span>
+    <span class=hljs-tag>&lt;/<span class=hljs-title>a</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span></code></pre><p>Finally, let&#39;s make sure we include our JS files:</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>script</span> <span class=hljs-attribute>src</span>=<span class=hljs-value>"//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"</span>&gt;</span><span class=javascript></span><span class=hljs-tag>&lt;/<span class=hljs-title>script</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>script</span> <span class=hljs-attribute>src</span>=<span class=hljs-value>"js/app.js"</span>&gt;</span><span class=javascript></span><span class=hljs-tag>&lt;/<span class=hljs-title>script</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>script</span> <span class=hljs-attribute>src</span>=<span class=hljs-value>"js/controllers/upload.js"</span>&gt;</span><span class=javascript></span><span class=hljs-tag>&lt;/<span class=hljs-title>script</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>script</span> <span class=hljs-attribute>src</span>=<span class=hljs-value>"js/services/imageService.js"</span>&gt;</span><span class=javascript></span><span class=hljs-tag>&lt;/<span class=hljs-title>script</span>&gt;</span>
+<span class=hljs-tag>&lt;<span class=hljs-title>script</span> <span class=hljs-attribute>src</span>=<span class=hljs-value>"js/directives/fileModel.js"</span>&gt;</span><span class=javascript></span><span class=hljs-tag>&lt;/<span class=hljs-title>script</span>&gt;</span></code></pre><h3 id=app-js>app.js</h3><p>This one is short and sweet. We&#39;ll just initialize the application (uploader) with its dependencies(uploader.controllers, uploader.directives, and uploader.services). I&#39;m also going to initialize each of the dependencies here so that they are easy to reference down the road.</p><pre><code class="hljs js">angular.module( <span class=hljs-string>"uploader"</span>, [
+    <span class=hljs-string>"uploader.controllers"</span>,
+    <span class=hljs-string>"uploader.directives"</span>,
+    <span class=hljs-string>"uploader.services"</span>
+]);
+
+angular.module( <span class=hljs-string>"uploader.controllers"</span>, [] );
+angular.module( <span class=hljs-string>"uploader.directives"</span>, [] );
+angular.module( <span class=hljs-string>"uploader.services"</span>, [] );</code></pre><h3 id=uploadctrl>UploadCtrl</h3><p>We&#39;re using a single controller, UploadCtrl. We&#39;ll start off by defining the controller and its dependencies. The dependencies are defined both as annotations - <code>[ &quot;$scope&quot;, &quot;$timeout&quot;, &quot;imageService&quot; ]</code> - and as arguments to the controller method.</p><p>The annotations are a necessity for Angular code that will be minified because Angular uses them to determine (and then inject) our controller&#39;s dependencies. Without the annotations, Angular infers the dependencies from the method&#39;s argument names, which will almost certainly be renamed during minification.</p><pre><code class="hljs js">angular.module( <span class=hljs-string>"uploader.controllers"</span> )
+
+.controller( <span class=hljs-string>"UploadCtrl"</span>, [ <span class=hljs-string>"$scope"</span>, <span class=hljs-string>"$timeout"</span>, <span class=hljs-string>"imageService"</span>, 
+    <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( $scope, $timeout, imageService )</span> </span>{
+        <span class=hljs-comment>// do controller stuff here</span>
+}])</code></pre><p>Although Angular is generally pretty forgiving when it comes to undefined variables, I prefer to initialize my $scope variables right away.</p><pre><code class="hljs js">$scope.images = [];
+$scope.error = <span class=hljs-string>""</span>;
+$scope.flash = <span class=hljs-string>""</span>;
+$scope.uploading = <span class=hljs-literal>false</span>;</code></pre><p>Next up, we have a handful of private (that is, var scoped and not accessible to the view) convenience methods that are used to manage the display of dynamic messages. This could certainly be done better, but it works for our purposes.</p><pre><code class="hljs js"><span class=hljs-keyword>var</span> setError = <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( error )</span> </span>{
+    $scope.error = error || <span class=hljs-string>""</span>;
+    $scope.uploading = <span class=hljs-literal>false</span>;
+};
+
+<span class=hljs-keyword>var</span> clearError = <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+    setError(<span class=hljs-string>""</span>);
+};
+
+<span class=hljs-keyword>var</span> flashMessage = <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( message, duration )</span> </span>{
+
+    $scope.flash = message;
+
+    $timeout(<span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+        $scope.flash = <span class=hljs-string>""</span>;
+    }, duration || <span class=hljs-number>3000</span>);
+
+};</code></pre><p>Now that our setup and private methods are out of the way, let&#39;s take a look at the first real action the controller will perform: requesting a list of images from the back end.</p><pre><code class="hljs js">imageService.getImages().then(
+    <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( data )</span> </span>{
+        $scope.imagePath = data.imagePath;
+        $scope.images = data.images;
+    },
+    setError
+);</code></pre><p><code>imageService.getImages()</code> returns a promise provided by <a href=https://docs.angularjs.org/api/ng/service/$q>$q</a>. Once the promise has resolved, the first callback to the <code>then()</code> method will be executed. If the promise is rejected, which will happen if we receive an error from the back end, the second callback (<code>setError</code>) will be executed.</p><p>In our success callback, we&#39;re just taking the response from the back end and sticking it into $scope. If we currently have images in the image directory, our image grid will be populated.</p><p>Our failure callback simply passes the entirety of the error message to <code>setError()</code>, which ultimately results in the error being dumped out on the screen. This is not optimal because an unexpected exception will cause Ratpack to respond with an HTML error page, the source of which will get dumped into our error div. Not a good solution, but sufficient for our purposes - it&#39;s not like this thing is going into a production environment anyway (famous last words)!</p><p>Finally, we have the method that handles sending the file to imageService and ultimately to the server. This method will be called via ng-click when the user clicks on the &quot;Upload!&quot; button.</p><pre><code class="hljs js">$scope.uploadFile = <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+
+    clearError();
+    $scope.uploading = <span class=hljs-literal>true</span>;
+
+    imageService.uploadImage( $scope.fileToUpload ).then(
+        <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( data )</span> </span>{
+            $scope.images.push( data.fileName );
+            $scope.uploading = <span class=hljs-literal>false</span>;
+            flashMessage( <span class=hljs-string>"Success!"</span> );
+        },
+        setError
+    );
+
+};</code></pre><p>The first order of business in this method is to clear any existing error messages from the screen. If the user previously attempted to upload a PDF and is looking at an error message, we want to wipe it out while they are waiting for their valid (we hope) file to upload. Next, we&#39;ll set the uploading flag - this is what&#39;s used to trigger some disabled attributes on the form inputs as well as to change the button text to indicate that the upload is in progress.</p><p>Just like <code>imageService.getImages()</code>, <code>imageService.uploadImage()</code> returns a promise. When it resolves, we&#39;ll push the new file name onto the images array, set the uploading flag to false, and then use our <code>flashMessage()</code> method to briefly display the text, &quot;Success!&quot; Again, if it fails we are just passing the entirety of the error string (whatever that might be) along to <code>setError()</code>.</p><p>We&#39;re passing a single argument to <code>imageService.uploadImage()</code> - <code>$scope.fileToUpload</code>. This variable is populated by the fileModel directive, which we&#39;ll discuss in the fileModel section.</p><h3 id=imageservice>imageService</h3><p>Our imageService exposes two public methods: <code>getImages()</code> and <code>uploadImage( image )</code>. In addition to the public methods, there is a single private method, <code>promise( callback )</code>, that allows us to avoid duplicating a very small amount of code by creating a deferred, invoking the callback, and returning a promise. You&#39;ll notice that we use the same dependency annotation here that was used on our controller.</p><pre><code class="hljs js">angular.module( <span class=hljs-string>"uploader.services"</span> )
+
+.service( <span class=hljs-string>"imageService"</span>, [ <span class=hljs-string>"$q"</span>, <span class=hljs-string>"$http"</span>, <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( $q, $http )</span> </span>{
+
+    <span class=hljs-keyword>var</span> promise = <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( callback )</span> </span>{
+
+        <span class=hljs-keyword>var</span> deferred = $q.defer();
+
+        callback( deferred );
+
+        <span class=hljs-keyword>return</span> deferred.promise;
+
+    };
+
+    <span class=hljs-keyword>return</span> {
+        getImages: <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+            <span class=hljs-comment>// retrieves images</span>
+        },
+
+        uploadImage: <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( image )</span> </span>{
+            <span class=hljs-comment>// sends an image</span>
+        }
+    };
+}]);</code></pre><p>Both of our public methods utilize the <code>promise</code> method. The first, <code>getImages()</code>, is straightforward - we simply make an HTTP request to &quot;image&quot;, our Ratpack endpoint at <a href=http://localhost:5050>http://localhost:5050</a> that returns a list of images, and then either resolve or reject the promise based on the result of that request.</p><pre><code class="hljs js">getImages: <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+    <span class=hljs-keyword>return</span> promise( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( deferred )</span> </span>{
+
+        $http.get( <span class=hljs-string>"image"</span> )
+            .success( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( data )</span> </span>{
+                deferred.resolve( data );
+            })
+            .error( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( error )</span> </span>{
+                deferred.reject( error );
+            });
+
+    });
+}</code></pre><p>The second, <code>uploadImage()</code>, makes use of the JavaScript <a href=https://developer.mozilla.org/en-US/docs/Web/API/FormData>FormData</a> object. FormData is the object that makes it possible for us to upload files directly via AJAX. The interface is simple enough: by calling FormData&#39;s <code>append()</code> method, we can attach key value pairs to the object and send them in the same format as a standard (non-AJAX) POST request.</p><pre><code class="hljs js">uploadImage: <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( image )</span> </span>{
+    <span class=hljs-keyword>return</span> promise( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( deferred )</span> </span>{
+
+        <span class=hljs-keyword>var</span> formData = <span class=hljs-keyword>new</span> FormData();
+
+        formData.append( <span class=hljs-string>"fileUpload"</span>, image );
+
+        $http.post( <span class=hljs-string>"image/upload"</span>, formData, {
+            transformRequest: angular.identity,
+            headers: { <span class=hljs-string>"Content-Type"</span>: <span class=hljs-literal>undefined</span> }
+        }).success( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( data )</span> </span>{
+            deferred.resolve( data );
+        }).error( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( error )</span> </span>{
+            deferred.reject( error );
+        });
+
+    });
+}</code></pre><p>Once again, we&#39;re performing an HTTP request and resolving the promise with a successful result or rejecting it when it is unsuccessful. In this case, however, we&#39;re passing two additional arguments to the request method (<code>$http.post()</code>): formData, which we know is the form we want to send to the server, and a configuration object, which is needed to make sure Angular doesn&#39;t screw up our request.</p><p>We have to set two parameters to prevent Angular from getting in our way: <code>transformRequest</code> and <code>headers</code> (specifically, Content-Type). When Angular sends a POST request, it assumes the data we are POSTing is JSON. The default action of the transformRequest method is to convert the data to a JSON string. So, how do we override that? We could define transformRequest as an anonymous function that simply doesn&#39;t do anything other than send the data right back, but that&#39;s not necessary because Angular provides us with the <a href=https://docs.angularjs.org/api/ng/function/angular.identity>identity</a> method, which simply returns its first argument.</p><p>Content-Type needs to be set to <code>undefined</code>, <em>not</em> &quot;multipart/form-data.&quot; If we set the content type to &quot;multipart/form-data&quot;, the POSTed data will not have the correct boundaries and our request will fail. If we set it to <code>undefined</code>, the browser will fill in both the correct content type and the boundaries we need. I&#39;ve seen reports of people using <code>false</code> instead of <code>undefined</code>, but I was unable to get that to work.</p><h3 id=filemodel>fileModel</h3><p>This directive is where the magic happens. Angular does not currently support binding to a file input, but the fileModel directive makes that possible. For a quick refresher of how we&#39;re using the directive, you can see the <code>file-model</code> attribute on the file input, which is what tells Angular to load up the directive and bind it to our DOM element.</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>input</span> <span class=hljs-attribute>type</span>=<span class=hljs-value>"file"</span> <span class=hljs-attribute>file-model</span>=<span class=hljs-value>"fileToUpload"</span> <span class=hljs-attribute>ng-disabled</span>=<span class=hljs-value>"uploading"</span>&gt;</span></code></pre><p>If you&#39;re not familiar with Angular directives, the gist of what you need to know is that the directive&#39;s link function is called once the element is ready to have its DOM manipulated or events bound to it. The link function receives three arguments: the scope that the element is bound to, the element itself, and the element&#39;s attributes. Attribute names with a dash (such as &quot;file-upload&quot;) will be converted to camelcase.</p><pre><code class="hljs js">angular.module( <span class=hljs-string>"uploader.directives"</span> )
+
+.directive( <span class=hljs-string>"fileModel"</span>, [ <span class=hljs-string>"$parse"</span>, <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( $parse )</span> </span>{
+    <span class=hljs-keyword>return</span> {
+        restrict: <span class=hljs-string>"A"</span>,
+        link: <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>( scope, element, attrs )</span> </span>{
+
+            <span class=hljs-keyword>var</span> model = $parse( attrs.fileModel );
+
+            element.bind( <span class=hljs-string>"change"</span>, <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+                scope.$apply( <span class=hljs-function><span class=hljs-keyword>function</span><span class=hljs-params>()</span> </span>{
+                    model.assign( scope, element[ <span class=hljs-number>0</span> ].files[ <span class=hljs-number>0</span> ] );
+                });
+            });
+
+        }
+    }
+}]);</code></pre><p>The first thing we need to do in the link function is to get a reference to our model which, in this case, is represented by the value of the <code>file-model</code> attribute on the input element. By using the <a href=https://docs.angularjs.org/api/ng/service/$parse>$parse</a> service, we&#39;re making sure we can support dot paths. For example, if the file-model attribute was &quot;files.images.image1,&quot; <code>$parse</code> will evaluate that as an expression and return the correct variable.</p><p>Once we have the model, we bind a change listener on our file input - standard jQuery stuff. When the change event is triggered, we update the model using <code>model.assign</code> and passing in the context (scope). This basically equates to <code>scope[ attrs.fileModel ] = value</code>, but this syntax is necessary due to the way we&#39;re retrieving the model with <code>$parse</code>. <code>scope.$apply()</code> is vital here because our model change is happening outside of Angular&#39;s digest cycle (basically, the loop that keeps all of our models in sync) and <code>scope.$apply()</code> lets Angular know that it needs to include this change the next time it performs the cycle.</p><h2 id=run-it->Run it!</h2><p>Now that we&#39;ve completed both halves of the application, we&#39;re ready to run it. This is accomplished by using the command prompt or terminal to navigate to the application&#39;s root directory and executing <code>gradle run</code>. If everything works correctly, you&#39;ll eventually see something like this:</p><pre><code class=hljs>:compileJava UP-<span class=hljs-keyword>TO</span>-<span class=hljs-keyword>DATE</span>
+:compileGroovy UP-<span class=hljs-keyword>TO</span>-<span class=hljs-keyword>DATE</span>
+:processResources UP-<span class=hljs-keyword>TO</span>-<span class=hljs-keyword>DATE</span>
+:classes UP-<span class=hljs-keyword>TO</span>-<span class=hljs-keyword>DATE</span>
+:configureRun
+:prepareBaseDir UP-<span class=hljs-keyword>TO</span>-<span class=hljs-keyword>DATE</span>
+:run
+[main] INFO ratpack.server.internal.NettyRatpackServer - Ratpack started for http:<span class=hljs-comment>//localhost:5050</span>
+&gt; Building <span class=hljs-number>85</span>% :run</code></pre><p>Once it&#39;s up and running, we can point our browser to <a href=http://localhost:5050>http://localhost:5050</a> and start uploading images!</p><h2 id=conclusion>Conclusion</h2><p>That wraps up part two of this two part series. You can find the full source of this project on Github at <a href=https://github.com/s992/angular-ratpack-upload>https://github.com/s992/angular-ratpack-upload</a>. If I did my job right, you probably now know more than you ever cared to about file uploads. :)</p><p>Thanks for reading!</p></div><footer><nav class=pagination><a href=http://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1 class=pull-left>&laquo; File Uploads with AngularJS and Ratpack: Part 1</a></nav></footer></article></div><div class=row><div class="col-md-8 col-lg-7 col-xl-5 center-block"><h1>Comments</h1><div id=disqus_thread></div><script type=text/javascript>var disqus_shortname = "swalsh",
+				disqus_identifier = "http://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2/"
+				disqus_url = "http://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2/";
+			
+			(function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; 
+				dsq.async = true;
+				dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();</script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div></div></main><footer id=site-footer class=container-fluid><ul class="nav nav-pills pull-right"><li><a target=_blank href=https://github.com/s992><i class="fa fa-github"></i></a></li><li><a target=_blank href=https://twitter.com/theseanwalsh><i class="fa fa-twitter"></i></a></li><li><a target=_blank href=http://stackoverflow.com/users/603502/sean-walsh><i class="fa fa-stack-overflow"></i></a></li><li><a target=_blank href=https://www.linkedin.com/pub/sean-walsh/bb/aa4/6a8><i class="fa fa-linkedin"></i></a></li></ul></footer><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52344422-1', 'auto');
+ga('send', 'pageview');</script></body></html>

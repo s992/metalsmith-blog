@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><title>File Uploads with AngularJS and Ratpack: Part 1 - Sean Walsh</title><meta name=author content="Sean Walsh"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Before I start this blog post, I just want to give a shout out to the Ratpack forum and especially the users that contribute to the forum. When I fini..."><link rel=icon href=http://swalsh.org/favicon.ico><link rel=apple-touch-icon sizes=57x57 href=http://swalsh.org/apple-touch-icon-57x57.png><link rel=apple-touch-icon sizes=60x60 href=http://swalsh.org/apple-touch-icon-60x60.png><link rel=apple-touch-icon sizes=72x72 href=http://swalsh.org/apple-touch-icon-72x72.png><link rel=apple-touch-icon sizes=76x76 href=http://swalsh.org/apple-touch-icon-76x76.png><link rel=apple-touch-icon sizes=114x114 href=http://swalsh.org/apple-touch-icon-114x114.png><link rel=apple-touch-icon sizes=120x120 href=http://swalsh.org/apple-touch-icon-120x120.png><link rel=apple-touch-icon sizes=144x144 href=http://swalsh.org/apple-touch-icon-144x144.png><link rel=apple-touch-icon sizes=152x152 href=http://swalsh.org/apple-touch-icon-152x152.png><link rel=apple-touch-icon sizes=180x180 href=http://swalsh.org/apple-touch-icon-180x180.png><link rel=icon type=image/png href=http://swalsh.org/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=http://swalsh.org/favicon-194x194.png sizes=194x194><link rel=icon type=image/png href=http://swalsh.org/favicon-96x96.png sizes=96x96><link rel=icon type=image/png href=http://swalsh.org/android-chrome-192x192.png sizes=192x192><link rel=icon type=image/png href=http://swalsh.org/favicon-16x16.png sizes=16x16><link rel=manifest href=http://swalsh.org/manifest.json><meta name=msapplication-TileColor content=#b91d47><meta name=msapplication-TileImage content=/mstile-144x144.png><meta name=theme-color content=#ffffff><link rel=stylesheet href=http://swalsh.org/assets/css/site.css><link rel=stylesheet href="http://fonts.googleapis.com/css?family=Slabo+27px|Roboto"><link rel=canonical href=http://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1><link rel=alternate title="Sean Walsh" type=application/rss+xml href=http://swalsh.org/rss.xml></head><body><header><nav class="navbar navbar-default"><div class=container-fluid><div class=navbar-header><button type=button class="navbar-toggle collapsed" data-toggle=collapse data-target=#main-navbar-collapse aria-expanded=false><span class=sr-only>Toggle navigation</span> <span class=icon-bar></span> <span class=icon-bar></span> <span class=icon-bar></span></button> <a class=navbar-brand href="http://swalsh.org/">Sean Walsh</a></div><div class="collapse navbar-collapse" id=main-navbar-collapse><ul class="nav navbar-nav"><li><a href=http://swalsh.org/blog>Blog</a></li><li><a href=http://swalsh.org/about>About</a></li></ul></div></div></nav></header><main class=container-fluid><div class=row><article class="col-md-8 col-lg-7 col-xl-5 center-block"><header><h1><a href=http://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1>File Uploads with AngularJS and Ratpack: Part 1</a></h1><p class=meta><time datetime="Tue Sep 16 2014 11:22:39 GMT-0700 (Pacific Daylight Time)">16 Sep 2014</time></p></header><div class="content full-content"><p>Before I start this blog post, I just want to give a shout out to the <a href="http://forum.ratpack.io/">Ratpack forum</a> and especially the users that contribute to the forum. When I finished my code for this post, I <a href=http://forum.ratpack.io/AngularJS-Ratpack-File-Upload-td655.html>posted</a> it to the forum in hopes of receiving some criticism so that I could tweak it before writing an article about. At most, I expected a comment or two along the lines of, &quot;Yah, XYZ is OK but you could maybe try it this way instead.&quot; In other words, helpful but not <em>too</em> helpful.</p><p>The next day, <a href=https://twitter.com/ldaley>Luke Daley</a> had forked my project (his fork is <a href=https://github.com/alkemist/angular-ratpack-upload>here</a>) and made some major improvements. He was also available to answer a few questions I had about his changes. I already thanked him profusely on the forum, but I just wanted to offer my thanks again - it&#39;s communities like this that make me really enjoy working with new (to me) technology. So, without further ado, let&#39;s get into it..</p><p><em>This article is running a lot longer than I expected it to, so I&#39;m going to break it into two parts. The first (this one) will be about the Ratpack application and the second will describe the AngularJS side of things. You can find the Angular portion of this series <a href=/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2>here</a>.</em></p><h2 id=the-application>The Application</h2><p>The end result of this series is a simple image upload application. The Angular powered front-end will send images to Ratpack, where they&#39;ll be written to disk along with thumbnails. The full project code can be found <a href=https://github.com/s992/angular-ratpack-upload>here</a>. This is what the final application will look like:</p><p><a href=/assets/images/angular-ratpack-upload/scrn1.png target=_blank><img src=/assets/images/angular-ratpack-upload/scrn1.png></a></p><p>It&#39;s not pretty, but if you&#39;re looking for an article on design, you&#39;ve come to the wrong place! :)</p><h2 id=ratpack>Ratpack</h2><p>We&#39;ll start with the server side and move on to the Angular stuff once our API is ready to go. Our Ratpack app is going to be very simple: we&#39;ll serve up the Angular app via a simple <code>index.html</code> and provide two endpoints for Angular to interact with:</p><ul><li><code>GET /image</code> to retrieve a list of uploaded images</li><li><code>POST /image/upload</code> to upload an image</li></ul><h3 id=project-structure>Project Structure</h3><p>Our project structure is standard for a Gradle Ratpack app. Within the <code>src</code> directory, we have two directories: <code>main</code> and <code>ratpack</code>. <code>main</code> has plenty of subdirectories, but only one actual file - our service for processing the uploaded images. In <code>ratpack/public</code>, we have everything we need for the Angular app. And finally, in the root of <code>ratpack</code>, we have our <code>Ratpack.groovy</code> and <code>ratpack.properties</code> files.</p><pre><code class=hljs><span class=hljs-regexp>/src/</span>main<span class=hljs-regexp>/groovy/</span>org<span class=hljs-regexp>/swalsh/</span>image/ImageService.groovy
+
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>css
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>js
+<span class=hljs-regexp>/src/</span>ratpack<span class=hljs-regexp>/public/</span>index.html
+
+<span class=hljs-regexp>/src/</span>ratpack/Ratpack.groovy
+<span class=hljs-regexp>/src/</span>ratpack/ratpack.properties
+
+build.gradle</code></pre><h3 id=build-gradle>build.gradle</h3><p>The <code>build.gradle</code> script is pretty standard in this project, so I&#39;m not going to go through it step by step. You can <a href=https://github.com/s992/angular-ratpack-upload/blob/master/build.gradle>click here</a> to view the file in its entirety.</p><p>The only important dependencies that we&#39;re pulling in (aside from the standard Ratpack stuff) are Ratpack&#39;s Jackson module and the <a href="http://www.thebuzzmedia.com/software/imgscalr-java-image-scaling-library/">imgscalr</a> library. The former is used for working with JSON, while the latter will be used to create thumbnail versions of the uploaded images. These are included in the build script like this:</p><pre><code class="hljs groovy">dependencies {
+    compile ratpack.dependency(<span class=hljs-string>"jackson"</span>)
+    compile <span class=hljs-string>"org.imgscalr:imgscalr-lib:4.2"</span>
+}</code></pre><h3 id=ratpack-properties>ratpack.properties</h3><p>Just a one liner here:</p><pre><code class="hljs groovy">maxContentLength = <span class=hljs-number>5000000</span></code></pre><p>As far as I can tell, Netty&#39;s default maximum content length - that is, the amount of data we can send in a request - is 1,048,576 bytes. This would limit us to just about 1 MB file sizes for image uploads. By changing this setting, we&#39;re bumping the maximum content length to about 5 MB, allowing us to send some bigger photos along.</p><h3 id=ratpack-groovy>Ratpack.groovy</h3><p>Finally, some actual code! We&#39;ll start off with some basic imports.</p><pre><code class="hljs groovy"><span class=hljs-keyword>import</span> org.swalsh.image.ImageService
+<span class=hljs-keyword>import</span> ratpack.form.Form
+<span class=hljs-keyword>import</span> ratpack.jackson.JacksonModule
+
+<span class=hljs-keyword>import</span> <span class=hljs-keyword>static</span> ratpack.groovy.Groovy.ratpack
+<span class=hljs-keyword>import</span> <span class=hljs-keyword>static</span> ratpack.jackson.Jackson.json</code></pre><p>Here&#39;s the rundown on what each import is for:</p><ul><li>The ImageService class is used for both processing the uploaded images as well as providing a list of currently available images.</li><li>Form is used by Ratpack to (you guessed it!) parse incoming form data.</li><li>JacksonModule and Jackson.json will be used to render JSON for the client.</li><li>Finally, ratpack.groovy.Groovy.ratpack is required for us to actually build the app.</li></ul><p>Next up, we have some variables that will be used throughout our handlers to tell ImageService where to put uploaded files and to tell Angular where it can find the files. I&#39;m not exactly excited about storing these config options here, but for the purposes of this project, it works.</p><pre><code class="hljs groovy"><span class=hljs-keyword>def</span> assetsPath = <span class=hljs-string>"public"</span>
+<span class=hljs-keyword>def</span> imageDirName = <span class=hljs-string>"uploaded-files"</span>
+<span class=hljs-keyword>def</span> imagePath = <span class=hljs-string>"$assetsPath/$imageDirName"</span>
+<span class=hljs-keyword>def</span> thumbPath = <span class=hljs-string>"$imagePath/thumb"</span></code></pre><p>One important thing to note about these folder paths is that they are <em>relative to Ratpack.groovy</em>. Our full path to the uploaded-files directory is <code>/src/ratpack/public/uploaded-files</code>, but we only need to specify <code>/public/uploaded-files</code>.</p><p>Now that the boring stuff is out of the way, we can move on to the fun stuff - Ratpack&#39;s Groovy DSL. Our app is kicked off via the <code>ratpack</code> method, with the app itself being defined within the closure:</p><pre><code class="hljs groovy">ratpack {
+    <span class=hljs-comment>// stuff!</span>
+}</code></pre><p>Within the <code>ratpack</code> closure, we first need to tell Guice (the DI framework) about the modules and bindings we&#39;re going to be using. In this case, we only need to add one module. The ImageService class will also be managed by Guice, but it does not have its own module - that will be explained a little bit later in the article.</p><pre><code class="hljs groovy">bindings {
+    add <span class=hljs-keyword>new</span> JacksonModule()
+}</code></pre><p>In addition to the module binding, we can include an <code>init</code> closure to execute action(s) once the injector has been finalized (<a href=http://forum.ratpack.io/What-does-init-do-in-modules-tp577p578.html>source</a>). Basically, the <code>init</code> block will only run a single time once the application has started. In this case, we&#39;re going to use it to create our upload directory if it doesn&#39;t already exist.</p><pre><code class="hljs groovy">bindings {
+    add <span class=hljs-keyword>new</span> JacksonModule()
+
+    init {
+        launchConfig.baseDir.file( thumbPath ).toFile().mkdirs()
+    }
+}</code></pre><p><a href=http://www.ratpack.io/manual/current/api/ratpack/launch/LaunchConfig.html>LaunchConfig</a> has a lot of useful information about our application, and here we&#39;re using it to grab the base directory.</p><p>Ratpack&#39;s <code>handlers</code> closure allows us to quickly and concisely define our available endpoints. We&#39;ll scaffold out our application like this:</p><pre><code class="hljs groovy">handlers {
+    assets assetsPath, <span class=hljs-string>"index.html"</span>
+
+    prefix(<span class=hljs-string>"image"</span>) {
+        get {
+            <span class=hljs-comment>// do stuff!</span>
+        }
+        post(<span class=hljs-string>"upload"</span>) {
+            <span class=hljs-comment>// do other stuff!</span>
+        }
+    }
+}</code></pre><p>We&#39;re now serving up our assets directory, complete with an index file, and our two API endpoints.</p><p>The <code>assets</code> method tells Ratpack to servce static assets from the assetsPath (defined as <code>&quot;public&quot;</code>) and to serve the index.html file as the index for that directory. Put simply, it lets us navigate to <a href=http://localhost:5050>http://localhost:5050</a> (or wherever you&#39;re hosting) and have index.html delivered right to us.</p><p>Our endpoints are configured using the <code>prefix</code> closure, which allows us to nest handlers that should be prefixed by whatever we&#39;ve defined as the prefix. Our prefix is &quot;image,&quot; so every handler defined inside the closure will be accessed via <code>http://localhost:5050/image/</code>, followed by the handler&#39;s path.</p><p>The first handler within the prefix closure is a <code>get</code> handler. With no path defined, the URL for this endpoint will be <a href=http://localhost:5050/image>http://localhost:5050/image</a>. The endpoint will only respond to GET requests - anything else will result in Ratpack returning a 405 (Method Not Allowed) status. Later, we&#39;ll populate this handler with a call to ImageService to grab a list of all the uploaded images and send them to the client.</p><p>The second handler is a <code>post</code> handler with a path defined. It functions similarly to the <code>get</code> handler, except it will only accept POST requests. Additionally, because we defined a path (&quot;upload&quot;), the endpoint will be <a href=http://localhost:5050/image/upload>http://localhost:5050/image/upload</a>. We&#39;ll use this handler to send the uploaded image to ImageService for processing.</p><p>So, how do we get access to ImageService within our handlers? If you remember from earlier in the post, we don&#39;t have a module for it so we were unable to add it in the bindings closure. We could always just new it up, but that&#39;s not necessary - the <code>prefix</code> handler uses Guice&#39;s just-in-time bindings, which means that injecting the service is as simple as declaring it as an argument to the closure.</p><pre><code class="hljs groovy">prefix(<span class=hljs-string>"image"</span>) { ImageService imageService -&gt;
+    <span class=hljs-comment>// handlers and stuff</span>
+}</code></pre><p>One caveat to the JIT bindings is that they are only availabe on the <code>prefix</code> handler (<a href=http://forum.ratpack.io/AngularJS-Ratpack-File-Upload-tp655p659.html>source</a>) - you won&#39;t be able to use them on any of the other handlers such as <code>get</code> or <code>post</code>.</p><p>Before we start filling out our handlers, we need to grab a reference to the image and thumbnail directories because we&#39;ll be passing them in to ImageService.</p><pre><code class="hljs groovy">prefix(<span class=hljs-string>"image"</span>) { ImageService imageService -&gt;
+    <span class=hljs-keyword>def</span> baseDir = launchConfig.baseDir
+    <span class=hljs-keyword>def</span> imageDir = baseDir.file( imagePath ).toFile()
+    <span class=hljs-keyword>def</span> thumbDir = baseDir.file( thumbPath ).toFile()
+
+    get {
+        <span class=hljs-comment>// do stuff!</span>
+    }
+
+    post(<span class=hljs-string>"upload"</span>) {
+        <span class=hljs-comment>// do other stuff!</span>
+    }
+}</code></pre><p>The <code>get</code> handler is nice and easy - we&#39;ll just make a call to <code>getUploadedImages</code>, which returns a promise. Once the promise is resolved, we&#39;ll receive a list of image filenames. We&#39;ll use the Ratpack <code>context.render</code> method to send the list of filenames and the location of the files back to the client.</p><p>Promises are important to Ratpack because it&#39;s <a href=http://www.ratpack.io/manual/current/async.html#asynchronous__non_blocking>designed to function asynchronously</a>. By wrapping our blocking code - such as file or database operations - in a promise, we can take advantage of the performance gains inherent to Ratpack&#39;s asynchronous design.</p><pre><code class="hljs groovy">get {
+    imageService.getUploadedImages( imageDir ).then {
+        render json( <span class=hljs-string>imagePath:</span> imageDirName, <span class=hljs-string>images:</span> it )
+    }
+}</code></pre><p>The JSON generated by the <code>get</code> handler will look something like this:</p><pre><code class="hljs json">{
+    "<span class=hljs-attribute>imagePath</span>": <span class=hljs-value><span class=hljs-string>"uploaded-files"</span></span>,
+    "<span class=hljs-attribute>images</span>": <span class=hljs-value>[
+        <span class=hljs-string>"image1.png"</span>,
+        <span class=hljs-string>"image2.png"</span>,
+        <span class=hljs-string>"image3.png"</span>
+    ]
+</span>}</code></pre><p>Our <code>post</code> handler will use the <code>context.parse</code> method to read the incoming POST request into a <a href=http://www.ratpack.io/manual/current/api/ratpack/form/Form.html>Form</a>. The Form class is basically a map with a handful of convenience methods for working with uploaded files. Once we&#39;ve parsed the form, we can use <code>form.file( formFieldName )</code> to grab a reference to the uploaded file (represented as an <a href=http://www.ratpack.io/manual/current/api/ratpack/form/UploadedFile.html>UploadedFile</a>).</p><pre><code class="hljs groovy">post(<span class=hljs-string>"upload"</span>) {
+    <span class=hljs-keyword>def</span> form = parse Form
+    <span class=hljs-keyword>def</span> uploaded = form.file( <span class=hljs-string>"fileUpload"</span> )
+}</code></pre><p>Once we&#39;ve got the file, we need to verify that the file being uploaded is an image and, if it is an image, process it, and if not, return an error to the client.</p><pre><code class="hljs groovy">post(<span class=hljs-string>"upload"</span>) {
+    <span class=hljs-keyword>def</span> form = parse Form
+    <span class=hljs-keyword>def</span> uploaded = form.file( <span class=hljs-string>"fileUpload"</span> )
+
+    <span class=hljs-keyword>if</span>( imageService.isImageFile( uploaded ) ) {
+        imageService.process( uploaded, imageDir, thumbDir ).then {
+            render json( <span class=hljs-string>fileName:</span> it.name )
+        }
+    } <span class=hljs-keyword>else</span> {
+        response.status(<span class=hljs-number>400</span>).send <span class=hljs-string>"Invalid file type. Images only!"</span>
+    }
+}</code></pre><p>And with that, our Ratpack configuration is complete. You can view Ratpack.groovy in its entirety <a href=https://github.com/s992/angular-ratpack-upload/blob/master/src/ratpack/Ratpack.groovy>here</a>.</p><h3 id=imageservice-groovy>ImageService.groovy</h3><p>ImageService only has a handful of methods, so we&#39;ll just run through them quickly. As always, you can view the entire file <a href=https://github.com/s992/angular-ratpack-upload/blob/master/src/main/groovy/org/swalsh/image/ImageService.groovy>here</a>.</p><p>First up is the constructor, which is annotated with <code>@Inject</code> and expecting a single argument: an instance of <a href=http://www.ratpack.io/manual/current/api/ratpack/exec/ExecControl.html>ExecControl</a> that will be injected by Guice. ExecControl is what gives us the ability to use Ratpack&#39;s promises.</p><pre><code class="hljs groovy"><span class=hljs-annotation>@Inject</span>
+ImageService( ExecControl execControl ) {
+    <span class=hljs-keyword>this</span>.execControl = execControl
+}</code></pre><p>There are also a few convenience methods that probably don&#39;t require an explanation. I suppose there are two things to note here:</p><ol><li>The <a href=http://www.ratpack.io/manual/current/api/ratpack/form/UploadedFile.html>UploadedFile</a> class provides us with easy access to the content type (e.g. &quot;image/jpeg&quot;) which makes it very easy to do a simple type check.</li><li>UploadedFile (via <a href=http://www.ratpack.io/manual/current/api/ratpack/http/TypedData.html>TypedData</a>) provides a few ways for us to access the file contents: as raw data in a <a href="http://netty.io/4.0/api/io/netty/buffer/ByteBuf.html?is-external=true">ByteBuf</a>, as raw data as bytes (<code>byte[]</code>), or as an InputStream. In this case, we&#39;re using the input stream to read the file into a BufferedImage.</li></ol><pre><code class="hljs groovy">Boolean isImageFile( UploadedFile file ) {
+    file.contentType.type.contains( <span class=hljs-string>"image"</span> )
+}
+
+String getUniqueFileName( String extension ) {
+    <span class=hljs-string>"${randomUUID()}.$extension"</span>
+}
+
+BufferedImage readImage( UploadedFile file ) {
+    ImageIO.read( file.inputStream )
+}</code></pre><p>Next up, we&#39;ll use ExecControl to wrap a blocking interaction with a promise in <code>getUploadedImages</code>. This method returns a list of all the file names found in the application&#39;s image directory. As an aside, Groovy is freakin&#39; awesome: look at that one liner to get the list. The code to retrieve the list was five lines long before Luke got his hands on it, and I can&#39;t complain.</p><pre><code class="hljs groovy">Promise&lt;List&lt;String&gt;&gt; getUploadedImages( File imageDirectory ) {
+
+    execControl.blocking {
+        imageDirectory.listFiles( { it.isFile() } <span class=hljs-keyword>as</span> FileFilter ).sort { it.lastModified() }*.name
+    }
+
+}</code></pre><p>Processing the image consists of grabbing a unique file name and then saving off both the full size image and the thumbnail. Once again, we&#39;re utilizing promises.</p><pre><code class="hljs groovy">Promise&lt;File&gt; process( UploadedFile file, File imageDirectory, File thumbDirectory ) {
+
+    String fileName = getUniqueFileName( <span class=hljs-string>"png"</span> )
+    BufferedImage image = readImage( file )
+
+    execControl.blocking {
+        saveThumb( image, fileName, thumbDirectory )
+        saveImage( image, fileName, imageDirectory )
+    }
+
+}</code></pre><p>The actual saving is pretty boring - we just use ImageIO to write the image file to disk. In the case of the thumbnail, we use imgscalr to resize it by setting the height to 100 pixels and then turn around and call <code>saveImage()</code> with the thumbnail.</p><pre><code class="hljs groovy">File saveImage( BufferedImage image, String fileName, File directory ) {
+
+    File file = <span class=hljs-keyword>new</span> File( directory, fileName )
+    ImageIO.write( image, <span class=hljs-string>"png"</span>, file )
+
+    file
+
+}
+
+File saveThumb( BufferedImage image, String fileName, File directory ) {
+
+    BufferedImage thumb = Scalr.resize( image, Mode.FIT_TO_HEIGHT, <span class=hljs-number>100</span> )
+    saveImage( thumb, fileName, directory )
+
+}</code></pre><h2 id=conclusion>Conclusion</h2><p>That concludes the Ratpack/Groovy portion of our application. I&#39;ll describe the AngularJS app in part two, <a href=/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2>here</a>. As always, please feel free to leave your comments and criticisms below!</p></div><footer><nav class=pagination><a href=http://swalsh.org/blog/2014/09/07/migrating-octopress-to-a-new-computer class=pull-left>&laquo; Migrating Octopress to a New Computer</a> <a href=http://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2 class=pull-right>File Uploads with AngularJS and Ratpack: Part 2 &raquo;</a></nav></footer></article></div><div class=row><div class="col-md-8 col-lg-7 col-xl-5 center-block"><h1>Comments</h1><div id=disqus_thread></div><script type=text/javascript>var disqus_shortname = "swalsh",
+				disqus_identifier = "http://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1/"
+				disqus_url = "http://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1/";
+			
+			(function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; 
+				dsq.async = true;
+				dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();</script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div></div></main><footer id=site-footer class=container-fluid><ul class="nav nav-pills pull-right"><li><a target=_blank href=https://github.com/s992><i class="fa fa-github"></i></a></li><li><a target=_blank href=https://twitter.com/theseanwalsh><i class="fa fa-twitter"></i></a></li><li><a target=_blank href=http://stackoverflow.com/users/603502/sean-walsh><i class="fa fa-stack-overflow"></i></a></li><li><a target=_blank href=https://www.linkedin.com/pub/sean-walsh/bb/aa4/6a8><i class="fa fa-linkedin"></i></a></li></ul></footer><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52344422-1', 'auto');
+ga('send', 'pageview');</script></body></html>
