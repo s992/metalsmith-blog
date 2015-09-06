@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><title>Building a GitHub Activity Feed - Sean Walsh</title><meta name=author content="Sean Walsh"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="When I set out to come up with a cool design for my site, I wasn&#x27;t really sure what I was shooting for. I just downloaded Twitter Bootstrap and went t..."><link rel=icon href=http://swalsh.org/favicon.ico><link rel=apple-touch-icon sizes=57x57 href=http://swalsh.org/apple-touch-icon-57x57.png><link rel=apple-touch-icon sizes=60x60 href=http://swalsh.org/apple-touch-icon-60x60.png><link rel=apple-touch-icon sizes=72x72 href=http://swalsh.org/apple-touch-icon-72x72.png><link rel=apple-touch-icon sizes=76x76 href=http://swalsh.org/apple-touch-icon-76x76.png><link rel=apple-touch-icon sizes=114x114 href=http://swalsh.org/apple-touch-icon-114x114.png><link rel=apple-touch-icon sizes=120x120 href=http://swalsh.org/apple-touch-icon-120x120.png><link rel=apple-touch-icon sizes=144x144 href=http://swalsh.org/apple-touch-icon-144x144.png><link rel=apple-touch-icon sizes=152x152 href=http://swalsh.org/apple-touch-icon-152x152.png><link rel=apple-touch-icon sizes=180x180 href=http://swalsh.org/apple-touch-icon-180x180.png><link rel=icon type=image/png href=http://swalsh.org/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=http://swalsh.org/favicon-194x194.png sizes=194x194><link rel=icon type=image/png href=http://swalsh.org/favicon-96x96.png sizes=96x96><link rel=icon type=image/png href=http://swalsh.org/android-chrome-192x192.png sizes=192x192><link rel=icon type=image/png href=http://swalsh.org/favicon-16x16.png sizes=16x16><link rel=manifest href=http://swalsh.org/manifest.json><meta name=msapplication-TileColor content=#b91d47><meta name=msapplication-TileImage content=/mstile-144x144.png><meta name=theme-color content=#ffffff><link rel=stylesheet href=http://swalsh.org/assets/css/site.css><link rel=stylesheet href="http://fonts.googleapis.com/css?family=Slabo+27px|Roboto"><link rel=canonical href=http://swalsh.org/blog/2011/10/31/building-a-github-activity-feed><link rel=alternate title="Sean Walsh" type=application/rss+xml href=http://swalsh.org/rss.xml></head><body><header><nav class="navbar navbar-default"><div class=container-fluid><div class=navbar-header><button type=button class="navbar-toggle collapsed" data-toggle=collapse data-target=#main-navbar-collapse aria-expanded=false><span class=sr-only>Toggle navigation</span> <span class=icon-bar></span> <span class=icon-bar></span> <span class=icon-bar></span></button> <a class=navbar-brand href="http://swalsh.org/">Sean Walsh</a></div><div class="collapse navbar-collapse" id=main-navbar-collapse><ul class="nav navbar-nav"><li><a href=http://swalsh.org/blog>Blog</a></li><li><a href=http://swalsh.org/about>About</a></li></ul></div></div></nav></header><main class=container-fluid><div class=row><article class="col-md-8 col-lg-7 col-xl-5 center-block"><header><h1><a href=http://swalsh.org/blog/2011/10/31/building-a-github-activity-feed>Building a GitHub Activity Feed</a></h1><p class=meta><time datetime="Mon Oct 31 2011 05:00:00 GMT-0700 (Pacific Daylight Time)">31 Oct 2011</time></p></header><div class="content full-content"><p>When I set out to come up with a cool design for my site, I wasn&#39;t really sure what I was shooting for. I just downloaded Twitter Bootstrap and went to work throwing DIVs around. I&#39;m pretty happy with how it came out, but one part that I really like a lot is the GitHub feed you see in the right hand column. I haven&#39;t ever seen a site with one and there weren&#39;t any tutorials on how to make one, so I figured I&#39;d jump right in.</p><p>From my GitHub profile, I could see that there was an easy way to pull an RSS feed of my Public Activity, so I figured I&#39;d start there. Clicking the icon returns an Atom feed with a lot of (unnecessary, in my opinion) mark-up. The DOM for a single push looked like this:</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>base</span>=<span class=hljs-value>"https://github.com/s992.atom"</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"feedEntryContent"</span>&gt;</span><span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"details"</span>&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"commits"</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>ul</span>&gt;</span>
+            <span class=hljs-tag>&lt;<span class=hljs-title>li</span>&gt;</span>
+                <span class=hljs-tag>&lt;<span class=hljs-title>a</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"committer"</span> <span class=hljs-attribute>href</span>=<span class=hljs-value>"/s992"</span>&gt;</span>s992<span class=hljs-tag>&lt;/<span class=hljs-title>a</span>&gt;</span> committed <span class=hljs-tag>&lt;<span class=hljs-title>a</span> <span class=hljs-attribute>href</span>=<span class=hljs-value>"/s992/tweet-this/commit/c96859cf3930d33ace3e23783d17a186af96dce0"</span>&gt;</span>c96859c<span class=hljs-tag>&lt;/<span class=hljs-title>a</span>&gt;</span>
+
+                <span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"message"</span>&gt;</span>
+                    <span class=hljs-tag>&lt;<span class=hljs-title>blockquote</span>&gt;</span>Allow for configuration of content types to Tweet from, updated readme accordingly.<span class=hljs-tag>&lt;/<span class=hljs-title>blockquote</span>&gt;</span>
+                <span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span>
+            <span class=hljs-tag>&lt;/<span class=hljs-title>li</span>&gt;</span>
+        <span class=hljs-tag>&lt;/<span class=hljs-title>ul</span>&gt;</span>
+    <span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span></code></pre><p>That&#39;s a lot of divs for a simple display that was going to be a pain in the ass to style. I was a little disappointed and the thought of trying to parse it with regex sounded miserable(on a related note, is there a decent DOM parser for CF?). I remembered that Twitter will give you your activity stream in different formats by specifying them in the URL, a la <a href="http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=theseanwalsh">http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=theseanwalsh</a>. I decided to give it a shot and change the URL I was pinging to <a href=https://www.github.com/s992.json>https://www.github.com/s992.json</a> instead of s992.atom. Lo and behold, it worked! I had something to start with...</p><p>Reading over the JSON that was returned, it quickly became apparent that I was not going to be able to just take what GitHub gave me and loop over it unless I wanted a lot of logic in my view. Each &quot;event&quot; - Push, Pull, Fork, Follow, Watch, etc. - had a slightly different JSON structure. Well, I love writing cfscript and I love writing components, so I figured I&#39;d try my hand at writing a component to parse the JSON into a more usable format.</p><p>For each item that I wanted to display, I knew I wanted to follow the same general format: [actor] did [action] to [target]. The date, URL, and repository description or commit message wouldn&#39;t hurt either. So, I got to work.</p><p>The first thing I needed to do was make the request to GitHub and turn that into some JSON:</p><pre><code class="hljs java"><span class=hljs-function><span class=hljs-keyword>private</span> array function <span class=hljs-title>makeHttpRequestAndReturnJSON</span><span class=hljs-params>()</span> </span>{
+    var httpSvc = <span class=hljs-keyword>new</span> http();
+    var json = <span class=hljs-string>''</span>;
+
+    httpSvc.setUrl( variables.jsonURL );
+    httpSvc.addParam( type=<span class=hljs-string>'CGI'</span>, name=<span class=hljs-string>'accept'</span>, value=<span class=hljs-string>'text/json'</span>, encoded=<span class=hljs-string>'no'</span> );
+
+    json = httpSvc.send().getPrefix().filecontent;
+    json = deSerializeJSON( json );
+
+    <span class=hljs-keyword>return</span> json;
+}</code></pre><p>This code is pretty self explanatory. Once I had the JSON, I needed to mold it into something that I was ready to use in my view, so I wrote a method to loop over it and call some other methods depending on the type of event that GitHub said it was.</p><pre><code class="hljs java"><span class=hljs-function><span class=hljs-keyword>private</span> array function <span class=hljs-title>makeCleanJSON</span><span class=hljs-params>()</span> </span>{
+    var rArray = arrayNew( <span class=hljs-number>1</span> );
+    <span class=hljs-comment>//Don't worry about this, I just went overboard with getters and setters</span>
+    var json = getDirtyJSON();
+    var i = <span class=hljs-number>1</span>;
+
+    <span class=hljs-comment>//Because of potential missing events, I have to keep an "actual count" of</span>
+    <span class=hljs-comment>//items inserted into the struct so that my feed isn't shorter than I want</span>
+    <span class=hljs-comment>//it to be.</span>
+    var actualCount = <span class=hljs-number>1</span>;
+
+    <span class=hljs-keyword>for</span>(i = <span class=hljs-number>1</span>; actualCount &lt;= variables.itemLimit; i++) {
+        <span class=hljs-comment>//json[i].type contains the type of event for each item</span>
+        <span class=hljs-keyword>switch</span>(json[i].type) {
+            <span class=hljs-comment>//Depending on the event, we'll call the correct method and pass it the item in question</span>
+            <span class=hljs-keyword>case</span> <span class=hljs-string>"PushEvent"</span>:
+                rArray[ actualCount ] = handlePushEvent( json[i] );
+                actualCount++;
+                <span class=hljs-keyword>break</span>;
+            <span class=hljs-keyword>case</span> <span class=hljs-string>"WatchEvent"</span>:
+                rArray[ actualCount ] = handleWatchEvent( json[i] );
+                actualCount++;
+                <span class=hljs-keyword>break</span>;
+            <span class=hljs-keyword>case</span> <span class=hljs-string>"CreateEvent"</span>:
+                rArray[ actualCount ] = handleCreateEvent( json[i] );
+                actualCount++;
+                <span class=hljs-keyword>break</span>;
+            <span class=hljs-keyword>case</span> <span class=hljs-string>"ForkEvent"</span>:
+                rArray[ actualCount ] = handleForkEvent( json[i] );
+                actualCount++;
+                <span class=hljs-keyword>break</span>;
+            <span class=hljs-keyword>case</span> <span class=hljs-string>"FollowEvent"</span>:
+                rArray[ actualCount ] = handleFollowEvent( json[i] );
+                actualCount++;
+                <span class=hljs-keyword>break</span>;
+            <span class=hljs-keyword>default</span>:
+                <span class=hljs-keyword>break</span>;
+        }
+
+    }
+
+    <span class=hljs-keyword>return</span> rArray;
+}</code></pre><p>I played around with the idea of dynamically making the method calls(and getting rid of that ugly switch/case block) by using evaluate, but I don&#39;t have a comprehensive list of the potential events - meaning that if GitHub tosses me an event that I haven&#39;t written a method for, I&#39;ll get a big ugly CF error due to a missing method. If anyone can suggest a better way to do this, I&#39;m all ears! You&#39;ll also see that I keep two counters - one for the loop through the JSON and another that counts how many items I&#39;ve actually put into my returned array. The reason for this is that if I hit an event that I haven&#39;t accounted for, I will end up with a struct that is missing some keys.</p><p>Each method called is pretty similar(and you can check out the full CFC by hitting the download link at the bottom of the post), so I&#39;ll just give an example of one of them - handlePushEvent:</p><pre><code class="hljs java"><span class=hljs-function><span class=hljs-keyword>private</span> struct function <span class=hljs-title>handlePushEvent</span><span class=hljs-params>( required struct event )</span> </span>{
+    <span class=hljs-comment>//My cleverly named return struct</span>
+    var rStruct = structNew();
+    <span class=hljs-comment>//We'll need the branch and the repository to build the target string</span>
+    var branch = listGetAt( arguments.event.payload.ref, <span class=hljs-number>3</span>, <span class=hljs-string>"/"</span> );
+    var repository = event.repository.owner &amp; <span class=hljs-string>"/"</span> &amp; event.repository.name;
+    var target = <span class=hljs-string>''</span>;
+
+    <span class=hljs-comment>//For my site, I didn't want to include the branch in push events because</span>
+    <span class=hljs-comment>//the string was too long, so I wrote in a little option that can be set</span>
+    <span class=hljs-comment>//to keep it short</span>
+    <span class=hljs-keyword>if</span>(variables.targetType EQ <span class=hljs-string>"short"</span>) {
+        target = repository;
+    } <span class=hljs-keyword>else</span> {
+        target = branch &amp; <span class=hljs-string>" at "</span> &amp; repository;
+    }
+
+    <span class=hljs-comment>//I use the event field to style the li in the view</span>
+    structInsert( rStruct, <span class=hljs-string>"event"</span>, <span class=hljs-string>"push"</span> );
+    structInsert( rStruct, <span class=hljs-string>"url"</span>, arguments.event.url );
+    <span class=hljs-comment>//GitHub's date format is 2011/09/01 19:38:47, which CF didn't want to work with,</span>
+    <span class=hljs-comment>//so I'm going to pass it on to another method to format it.</span>
+    structInsert( rStruct, <span class=hljs-string>"date"</span>, formatGitHubDateString( arguments.event.created_at ) );
+    structInsert( rStruct, <span class=hljs-string>"actor"</span>, arguments.event.actor );
+    structInsert( rStruct, <span class=hljs-string>"action"</span>, <span class=hljs-string>"pushed to"</span> );
+    structInsert( rStruct, <span class=hljs-string>"target"</span>, target );
+
+    <span class=hljs-keyword>if</span>(arraylen( arguments.event.payload.shas ) GT <span class=hljs-number>1</span>) {
+        structInsert( rStruct, <span class=hljs-string>"description"</span>, 
+                   buildArrayForMultipleCommits( arguments.event.payload.shas ) );
+    } <span class=hljs-keyword>else</span> {
+        structInsert( rStruct, <span class=hljs-string>"description"</span>, arguments.event.payload.shas[<span class=hljs-number>1</span>][<span class=hljs-number>3</span>] );
+    }
+
+    <span class=hljs-keyword>return</span> rStruct;
+}</code></pre><p>If you&#39;re still paying attention, you&#39;ll notice that I make a call to buildArrayForMultipleCommits() in there. The reason for this is that GitHub passes all commits for a specific event in an array. There is a lot of stuff in there I don&#39;t care about, like the SHA, the author e-mail, and the author name - all I care about is the commit message right now. So, I just loop over the array and return an array that only has the commit messages:</p><pre><code class="hljs java"><span class=hljs-function><span class=hljs-keyword>private</span> array function <span class=hljs-title>buildArrayForMultipleCommits</span><span class=hljs-params>( required array commits )</span> </span>{
+    var rArray = arrayNew( <span class=hljs-number>1</span> );
+    var i = <span class=hljs-number>1</span>;
+
+    <span class=hljs-keyword>for</span>(i = <span class=hljs-number>1</span>; i &lt;= arraylen( arguments.commits ); i++) {
+        rArray[i] = arguments.commits[i][<span class=hljs-number>3</span>];
+    }
+
+    <span class=hljs-keyword>return</span> rArray;
+}</code></pre><p>Alright, we&#39;re ready to go! Now all I have to do in my view is grab the &quot;clean&quot; JSON and loop over it, formatting it how I want it:</p><pre><code class="hljs html"><span class=hljs-tag>&lt;<span class=hljs-title>ul</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"feed"</span> &gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>cfset</span> <span class=hljs-attribute>myJSON</span> = <span class=hljs-attribute>new</span> <span class=hljs-attribute>GitHubJSONParser</span>( '<span class=hljs-attribute>https:</span>//<span class=hljs-attribute>github.com</span>/<span class=hljs-attribute>s992.json</span>' )<span class=hljs-attribute>.getCleanJSON</span>() /&gt;</span>
+    <span class=hljs-tag>&lt;<span class=hljs-title>cfloop</span> <span class=hljs-attribute>from</span>=<span class=hljs-value>"1"</span> <span class=hljs-attribute>to</span>=<span class=hljs-value>"#arrayLen(myJSON)#"</span> <span class=hljs-attribute>index</span>=<span class=hljs-value>"i"</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>li</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"feedItem #myJSON[i].event#"</span> &gt;</span>
+            <span class=hljs-tag>&lt;<span class=hljs-title>a</span> <span class=hljs-attribute>href</span>=<span class=hljs-value>"#myJSON[i].url#"</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"updateLink"</span> &gt;</span>
+                #myJSON[i].actor# 
+                #myJSON[i].action# 
+                #myJSON[i].target#
+            <span class=hljs-tag>&lt;/<span class=hljs-title>a</span>&gt;</span>
+            <span class=hljs-tag>&lt;<span class=hljs-title>p</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"updateMessage"</span> &gt;</span>
+                <span class=hljs-tag>&lt;<span class=hljs-title>cfif</span> <span class=hljs-attribute>isArray</span>( <span class=hljs-attribute>myJSON</span>[<span class=hljs-attribute>i</span>]<span class=hljs-attribute>.description</span> ) &gt;</span>
+                    Multiple commits:
+                    <span class=hljs-tag>&lt;<span class=hljs-title>ul</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"commits"</span> &gt;</span>
+                        <span class=hljs-tag>&lt;<span class=hljs-title>cfloop</span> <span class=hljs-attribute>array</span>=<span class=hljs-value>"#myJSON[i].description#"</span> <span class=hljs-attribute>index</span>=<span class=hljs-value>"commit"</span> &gt;</span>
+                            <span class=hljs-tag>&lt;<span class=hljs-title>li</span>&gt;</span>
+                                #commit#
+                            <span class=hljs-tag>&lt;/<span class=hljs-title>li</span>&gt;</span>
+                        <span class=hljs-tag>&lt;/<span class=hljs-title>cfloop</span>&gt;</span>
+                    <span class=hljs-tag>&lt;/<span class=hljs-title>ul</span>&gt;</span>
+                <span class=hljs-tag>&lt;<span class=hljs-title>cfelse</span>&gt;</span>
+                #myJSON[i].description#
+            <span class=hljs-tag>&lt;/<span class=hljs-title>cfif</span>&gt;</span>
+        <span class=hljs-tag>&lt;/<span class=hljs-title>p</span>&gt;</span>
+        <span class=hljs-tag>&lt;<span class=hljs-title>div</span> <span class=hljs-attribute>class</span>=<span class=hljs-value>"lastUpdated"</span> &gt;</span>
+            #myJSON[i].date#
+        <span class=hljs-tag>&lt;/<span class=hljs-title>div</span>&gt;</span>
+        <span class=hljs-tag>&lt;/<span class=hljs-title>li</span>&gt;</span>
+    <span class=hljs-tag>&lt;/<span class=hljs-title>cfloop</span>&gt;</span>
+<span class=hljs-tag>&lt;/<span class=hljs-title>ul</span>&gt;</span></code></pre><p>I&#39;ve uploaded the CFC as well as my Mura display object to GitHub, so please feel free to check it out and give me some feedback! You can find it at <a href=https://github.com/s992/github-feed-widget>https://github.com/s992/github-feed-widget</a></p></div><footer><nav class=pagination><a href=http://swalsh.org/blog/2011/12/07/integrating-sendgrid-with-your-coldfusion-application class=pull-right>Integrating SendGrid With Your ColdFusion Application &raquo;</a></nav></footer></article></div><div class=row><div class="col-md-8 col-lg-7 col-xl-5 center-block"><h1>Comments</h1><div id=disqus_thread></div><script type=text/javascript>var disqus_shortname = "swalsh",
+				disqus_identifier = "http://swalsh.org/blog/2011/10/31/building-a-github-activity-feed/"
+				disqus_url = "http://swalsh.org/blog/2011/10/31/building-a-github-activity-feed/";
+			
+			(function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; 
+				dsq.async = true;
+				dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();</script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div></div></main><footer id=site-footer class=container-fluid><ul class="nav nav-pills pull-right"><li><a target=_blank href=https://github.com/s992><i class="fa fa-github"></i></a></li><li><a target=_blank href=https://twitter.com/theseanwalsh><i class="fa fa-twitter"></i></a></li><li><a target=_blank href=http://stackoverflow.com/users/603502/sean-walsh><i class="fa fa-stack-overflow"></i></a></li><li><a target=_blank href=https://www.linkedin.com/pub/sean-walsh/bb/aa4/6a8><i class="fa fa-linkedin"></i></a></li></ul></footer><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52344422-1', 'auto');
+ga('send', 'pageview');</script></body></html>
