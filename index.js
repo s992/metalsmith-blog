@@ -1,5 +1,3 @@
-require("harmonize")();
-
 var metalsmith = require("metalsmith"),
 	markdown = require("metalsmith-markdown"),
 	layouts = require("metalsmith-layouts"),
@@ -30,7 +28,7 @@ var metadata = {
 	site: {
 		title: "Sean Walsh",
 		author: "Sean Walsh",
-		url: PROD ? "http://swalsh.org" : "http://localhost:8080",
+		url: PROD ? "https://swalsh.org/metalsmith-blog" : "http://localhost:8080",
 		social: {
 			github: "https://github.com/s992",
 			twitter: "https://twitter.com/theseanwalsh",
