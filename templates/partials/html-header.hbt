@@ -7,6 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="{{description}}">
 
+	<base href="{{site.url}}">
+
 	<!-- so many favicons.. -->
 	<link rel="icon" href="{{site.url}}/favicon.ico">
 	<link rel="apple-touch-icon" sizes="57x57" href="{{site.url}}/apple-touch-icon-57x57.png">
