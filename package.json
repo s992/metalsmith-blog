@@ -28,7 +28,7 @@
     "metalsmith-metallic": "0.3.1",
     "metalsmith-pagination": "1.1.1",
     "metalsmith-permalinks": "0.4.0",
-    "metalsmith-sass": "git://github.com/s992/metalsmith-sass.git#dd34976f4c9f1631dd15666173a351eae593e1d1",
+    "metalsmith-sass": "1.3.0",
     "metalsmith-sitemap": "0.1.0",
     "metalsmith-uncss": "0.2.0",
     "moment": "2.10.6",
