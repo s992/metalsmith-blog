@@ -28,7 +28,7 @@ var metadata = {
 	site: {
 		title: "Sean Walsh",
 		author: "Sean Walsh",
-		url: PROD ? "https://swalsh.org" : "http://localhost:8080",
+		url: PROD ? "http://www.swalsh.org" : "http://localhost:8080",
 		social: {
 			github: "https://github.com/s992",
 			twitter: "https://twitter.com/theseanwalsh",

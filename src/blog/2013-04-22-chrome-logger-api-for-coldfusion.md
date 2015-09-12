@@ -23,30 +23,30 @@ The most basic logging is accomplished via `chromelogger.log()`. Simply pass in 
 
 This results in the following output to the console:
 
-<a href="assets/images/chromelogger/scrn1.png" target="_blank"><img src="/assets/images/chromelogger/scrn1.png"></a>
+<a href="/assets/images/chromelogger/scrn1.png" target="_blank"><img src="/assets/images/chromelogger/scrn1.png"></a>
 
 Of course, if you don't want all your logged items on one line, you can call log() as many times as you want:
 
 <script src="https://gist.github.com/s992/5431987.js?file=chromelogger2.cfc"></script>
 
-<a href="assets/images/chromelogger/scrn2.png" target="_blank"><img src="/assets/images/chromelogger/scrn2.png"></a>
+<a href="/assets/images/chromelogger/scrn2.png" target="_blank"><img src="/assets/images/chromelogger/scrn2.png"></a>
 
 In addition to `log()`, you also have the option to `warn()` and `error()`:
 
 <script src="https://gist.github.com/s992/5431987.js?file=chromelogger3.cfc"></script>
 
-<a href="assets/images/chromelogger/scrn3.png" target="_blank"><img src="/assets/images/chromelogger/scrn3.png"></a>
+<a href="/assets/images/chromelogger/scrn3.png" target="_blank"><img src="/assets/images/chromelogger/scrn3.png"></a>
 
 Don't forget about objects and exceptions (note that the recursion between User and Address is caught and handled):
 
 <script src="https://gist.github.com/s992/5431987.js?file=chromelogger4.cfc"></script>
 
-<a href="assets/images/chromelogger/scrn4.png" target="_blank"><img src="/assets/images/chromelogger/scrn4.png"></a>
+<a href="/assets/images/chromelogger/scrn4.png" target="_blank"><img src="/assets/images/chromelogger/scrn4.png"></a>
 
 Stucts, arrays, and queries are supported too:
 
 <script src="https://gist.github.com/s992/5431987.js?file=chromelogger5.cfc"></script>
 
-<a href="assets/images/chromelogger/scrn5.png" target="_blank"><img src="/assets/images/chromelogger/scrn5.png"></a>
+<a href="/assets/images/chromelogger/scrn5.png" target="_blank"><img src="/assets/images/chromelogger/scrn5.png"></a>
 
 So, there you have it. Check out the project on GitHub for (a little) more documentation and to get started!

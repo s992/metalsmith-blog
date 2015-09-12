@@ -17,7 +17,7 @@ Here's a quick recap for those of you who chose to skip part 1:
 
 The end result of this series is a simple image upload application. The Angular powered front-end will send images to Ratpack, where they'll be written to disk along with thumbnails. The full project code can be found [here](https://github.com/s992/angular-ratpack-upload). This is what the final application will look like:
 
-<a href="assets/images/angular-ratpack-upload/scrn1.png" target="_blank"><img src="/assets/images/angular-ratpack-upload/scrn1.png"></a>
+<a href="/assets/images/angular-ratpack-upload/scrn1.png" target="_blank"><img src="/assets/images/angular-ratpack-upload/scrn1.png"></a>
 
 It's not pretty, but if you're looking for an article on design, you've come to the wrong place! :)
 
