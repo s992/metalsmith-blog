@@ -1,110 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/index.html</loc>
-        <lastmod>2015-09-09</lastmod>
+        <loc>https://swalsh.org/index.html</loc>
+        <lastmod>2015-09-12</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2011/10/31/building-a-github-activity-feed</loc>
+        <loc>https://swalsh.org/blog/2011/10/31/building-a-github-activity-feed</loc>
         <lastmod>2015-08-29</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2013/04/22/chrome-logger-api-for-coldfusion</loc>
-        <lastmod>2015-09-09</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/06/14/changes</loc>
+        <loc>https://swalsh.org/blog/2011/12/07/integrating-sendgrid-with-your-coldfusion-application</loc>
         <lastmod>2015-08-29</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1</loc>
-        <lastmod>2015-09-09</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2</loc>
-        <lastmod>2015-09-09</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/06/25/groovy-browser-automation-with-geb</loc>
+        <loc>https://swalsh.org/blog/2013/03/20/programmatically-creating-new-datasource-in-coldfusion</loc>
         <lastmod>2015-08-29</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog</loc>
-        <lastmod>2015-09-05</lastmod>
+        <loc>https://swalsh.org/blog/2013/04/22/chrome-logger-api-for-coldfusion</loc>
+        <lastmod>2015-09-12</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2011/12/07/integrating-sendgrid-with-your-coldfusion-application</loc>
+        <loc>https://swalsh.org/blog/2014/06/14/changes</loc>
         <lastmod>2015-08-29</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/09/07/migrating-octopress-to-a-new-computer</loc>
+        <loc>https://swalsh.org/blog/2014/06/25/groovy-browser-automation-with-geb</loc>
+        <lastmod>2015-08-29</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/2014/07/01/quick-tip-angular-debugging</loc>
+        <lastmod>2015-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/2014/07/17/running-the-groovy-console-from-gradle</loc>
+        <lastmod>2015-08-29</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/2014/08/26/ratpack-first-impressions</loc>
+        <lastmod>2015-08-29</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/2014/09/16/file-uploads-with-angularjs-and-ratpack-part-1</loc>
+        <lastmod>2015-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/2014/09/07/migrating-octopress-to-a-new-computer</loc>
         <lastmod>2015-08-30</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2013/03/20/programmatically-creating-new-datasource-in-coldfusion</loc>
-        <lastmod>2015-08-29</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/07/01/quick-tip-angular-debugging</loc>
-        <lastmod>2015-09-09</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/08/26/ratpack-first-impressions</loc>
-        <lastmod>2015-08-29</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/2014/07/17/running-the-groovy-console-from-gradle</loc>
-        <lastmod>2015-08-29</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://swalsh.org/metalsmith-blog/about</loc>
+        <loc>https://swalsh.org/blog</loc>
         <lastmod>2015-09-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/page/1</loc>
-        <lastmod>2015-09-09</lastmod>
+        <loc>https://swalsh.org/blog/2014/09/17/file-uploads-with-angularjs-and-ratpack-part-2</loc>
+        <lastmod>2015-09-12</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/page/2</loc>
-        <lastmod>2015-09-09</lastmod>
+        <loc>https://swalsh.org/about</loc>
+        <lastmod>2015-09-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://swalsh.org/metalsmith-blog/blog/page/3</loc>
-        <lastmod>2015-09-09</lastmod>
+        <loc>https://swalsh.org/blog/page/1</loc>
+        <lastmod>2015-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/page/2</loc>
+        <lastmod>2015-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://swalsh.org/blog/page/3</loc>
+        <lastmod>2015-09-12</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
